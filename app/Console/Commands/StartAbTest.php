@@ -25,16 +25,6 @@ class StartAbTest extends Command
     protected $description = 'Start a new A/B test';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      */
     public function handle()

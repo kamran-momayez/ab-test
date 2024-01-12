@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Classes\AbTestManager;
 use Illuminate\Console\Command;
 
-class VewAbTests extends Command
+class ViewAbTests extends Command
 {
     /**
      * The name and signature of the console command.
@@ -20,16 +20,6 @@ class VewAbTests extends Command
      * @var string
      */
     protected $description = 'View all A/B tests';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.

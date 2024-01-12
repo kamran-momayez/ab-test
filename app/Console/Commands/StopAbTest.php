@@ -21,15 +21,6 @@ class StopAbTest extends Command
      */
     protected $description = 'Stop an A/B test';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
