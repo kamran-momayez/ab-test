@@ -2,7 +2,6 @@
 
 namespace App\Classes;
 
-use App\Exceptions\IntegrityConstraintViolationException;
 use App\Models\AbTest;
 use App\Models\AbTestVariant;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,12 +10,11 @@ use Illuminate\Support\Facades\DB;
 class AbTestManager
 {
     /**
-     * @param $name
-     * @param $variantsArray
+     * @param string $name
+     * @param array  $variantsArray
      * @return void
-     * @throws IntegrityConstraintViolationException
      */
-    public function start($name, $variantsArray)
+    public function start(string $name, array $variantsArray)
     {
         DB::beginTransaction();
 
@@ -39,10 +37,10 @@ class AbTestManager
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      */
-    public function stop($name): bool
+    public function stop(string $name): bool
     {
         $abTest = AbTest::firstWhere('name', $name);
 
@@ -63,5 +61,32 @@ class AbTestManager
         return AbTest::all();
     }
 
+    /**
+     * @param $abTestName
+     * @return AbTest|Collection
+     */
+    public function getTest($abTestName)
+    {
+        return AbTest::firstWhere(['name' => $abTestName, 'is_running' => 1]);
+    }
+
+    /**
+     * @param AbTest $abTest
+     * @return AbTestVariant|false
+     */
+    public function getVariant(AbTest $abTest)
+    {
+        $variants = $abTest->variants->toArray();
+        $totalRatio = array_sum(array_column($variants, 'targeting_ratio'));
+        $randomValue = mt_rand(1, $totalRatio);
+        foreach ($variants as $variant) {
+            $randomValue -= $variant['targeting_ratio'];
+            if ($randomValue <= 0) {
+                return $variant;
+            }
+        }
+
+        return $variants[0];
+    }
 
 }
