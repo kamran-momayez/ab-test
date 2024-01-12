@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AbTest;
+use App\Classes\AbTestManager;
 use Illuminate\Console\Command;
 
 class VewAbTests extends Command
@@ -36,7 +36,8 @@ class VewAbTests extends Command
      */
     public function handle()
     {
-        $abTests = AbTest::all();
+        $abTestManager = new AbTestManager();
+        $abTests = $abTestManager->getAll();
 
         if ($abTests->isEmpty()) {
             $this->info('No A/B tests found.');

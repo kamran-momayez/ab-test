@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Classes\AbTestManager;
 use App\Exceptions\IntegrityConstraintViolationException;
-use App\Models\AbTest;
-use App\Models\AbTestVariant;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class StartAbTest extends Command
 {
@@ -56,30 +54,10 @@ class StartAbTest extends Command
         }
 
         try {
-        $variantsArray = array_reduce($variants, function ($carry, $item) {
-            $explodedItem = explode(":", $item);
-            $carry[$explodedItem[0]] = $explodedItem[1];
-            return $carry;
-        });
+            $variantsArray = $this->reformatArray($variants);
 
-            DB::beginTransaction();
-
-            $abTest = AbTest::create([
-                'name' => $name,
-            ]);
-
-            if ($abTest) {
-                foreach ($variantsArray as $variantName => $variantTargetingRatio) {
-                    $variant = new AbTestVariant([
-                        'name'            => $variantName,
-                        'targeting_ratio' => $variantTargetingRatio,
-                    ]);
-
-                    $abTest->variants()->save($variant);
-                }
-            }
-
-            DB::commit();
+            $abTestManager = new AbTestManager();
+            $abTestManager->start($name, $variantsArray);
 
             $this->info("A/B test '{$name}' started with its {$variantsCount} variants.");
 
@@ -88,5 +66,18 @@ class StartAbTest extends Command
         } catch (\Exception $e) {
             $this->error('Failed to start A/B test. ' . $e->getMessage());
         }
+    }
+
+    /**
+     * @param $variants
+     * @return array
+     */
+    private function reformatArray($variants): array
+    {
+        return array_reduce($variants, function ($carry, $item) {
+            $explodedItem = explode(":", $item);
+            $carry[$explodedItem[0]] = $explodedItem[1];
+            return $carry;
+        });
     }
 }

@@ -23,7 +23,12 @@ class AbTest extends Model
         return $this->hasMany(AbTestVariant::class);
     }
 
-    public function save(array $options = [])
+    /**
+     * @param array $options
+     * @return bool
+     * @throws IntegrityConstraintViolationException
+     */
+    public function save(array $options = []): bool
     {
         try {
             return parent::save($options);

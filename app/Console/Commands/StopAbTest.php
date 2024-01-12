@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AbTest;
+use App\Classes\AbTestManager;
 use Illuminate\Console\Command;
 
 class StopAbTest extends Command
@@ -37,14 +37,12 @@ class StopAbTest extends Command
     public function handle()
     {
         $name = $this->argument('name');
+        $abTestManager = new AbTestManager();
 
-        $abTest = AbTest::firstWhere('name', $name);
-
-        if ($abTest) {
-            $abTest->update(['is_running' => false]);
-            $this->info("A/B test '{$abTest->name}' stopped.");
-        } else {
-            $this->error("A/B test with name {$name} not found.");
+        if ($abTestManager->stop($name))
+            $this->info("A/B test $name stopped.");
+        else {
+            $this->error("A/B test $name not found.");
         }
     }
 }
