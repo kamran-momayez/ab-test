@@ -9,6 +9,13 @@ class AbTestVariant extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'targeting_ratio'];
+
     public function abTest()
     {
         return $this->belongsTo(AbTest::class);
