@@ -10,6 +10,7 @@ use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
 
 class AssignAbTestVariant
 {
@@ -22,23 +23,22 @@ class AssignAbTestVariant
     public function handle(Request $request, Closure $next)
     {
         $abTests = AbTest::getRunningTests();
-        if (count($abTests) > 0 && $this->abTestNameNotFoundInSession($request)) {
+        if (count($abTests) > 0 && $this->abTestNameNotFoundInSession()) {
             $assignVariantStrategy = new AssignVariantForNewSession();
         }
         else {
             $assignVariantStrategy = new AssignVariantForExistingSession();
         }
-        $assignVariantStrategy->execute($request, $abTests);
+        $assignVariantStrategy->execute($abTests);
 
         return $next($request);
     }
 
     /**
-     * @param Request $request
      * @return bool
      */
-    private function abTestNameNotFoundInSession(Request $request): bool
+    private function abTestNameNotFoundInSession(): bool
     {
-        return !$request->session()->has(AbstractAssignVariantStrategy::SESSION_TESTS_KEY);
+        return !Session::has(AbstractAssignVariantStrategy::SESSION_TESTS_KEY);
     }
 }

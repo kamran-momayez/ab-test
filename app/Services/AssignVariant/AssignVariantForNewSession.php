@@ -3,11 +3,10 @@
 namespace App\Services\AssignVariant;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
 
 class AssignVariantForNewSession extends AbstractAssignVariantStrategy implements AssignVariantStrategyInterface
 {
-    public function execute(Request $request, Collection $abTests)
+    public function execute(Collection $abTests)
     {
         $abTestsArray = [];
         foreach ($abTests as $abTest) {
@@ -15,7 +14,7 @@ class AssignVariantForNewSession extends AbstractAssignVariantStrategy implement
             $abTestsArray[$abTest['name']] = $variant['name'];
 
         }
-        $request->session()->put(self::SESSION_TESTS_KEY, $abTestsArray);
-        $request->session()->save();
+
+        $this->saveVariantsToSession($abTestsArray);
     }
 }
