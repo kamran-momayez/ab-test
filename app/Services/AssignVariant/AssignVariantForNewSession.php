@@ -12,7 +12,6 @@ class AssignVariantForNewSession extends AbstractAssignVariantStrategy implement
         foreach ($abTests as $abTest) {
             $variant = $this->abTestService->getRandomVariant($abTest);
             $abTestsArray[$abTest['name']] = $variant['name'];
-
         }
 
         $this->saveVariantsToSession($abTestsArray);

@@ -23,22 +23,19 @@ class AssignAbTestVariant
     public function handle(Request $request, Closure $next)
     {
         $abTests = AbTest::getRunningTests();
-        if (count($abTests) > 0 && $this->abTestNameNotFoundInSession()) {
-            $assignVariantStrategy = new AssignVariantForNewSession();
-        }
-        else {
-            $assignVariantStrategy = new AssignVariantForExistingSession();
-        }
+        $assignVariantStrategy = $this->createAssignVariantStrategy();
         $assignVariantStrategy->execute($abTests);
 
         return $next($request);
     }
 
     /**
-     * @return bool
+     * @return AbstractAssignVariantStrategy
      */
-    private function abTestNameNotFoundInSession(): bool
+    private function createAssignVariantStrategy(): AbstractAssignVariantStrategy
     {
-        return !Session::has(AbstractAssignVariantStrategy::SESSION_TESTS_KEY);
+        return Session::has(AbstractAssignVariantStrategy::SESSION_TESTS_KEY)
+            ? new AssignVariantForExistingSession()
+            : new AssignVariantForNewSession();
     }
 }
