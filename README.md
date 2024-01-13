@@ -1,22 +1,20 @@
 ## Description
 
-- `AbTest` and `AbTestVariant` model implemented to handle db responsibilities.
+- `AbTest` and `AbTestVariant` models implemented to handle db responsibilities.
 - `AbTestService` implemented to handle logical responsibilities.
-- `AbTestMiddleware` implemented to handle assigning a variant the session.
+- `AssignAbTestVariant` middleware implemented to choose different strategies for assigning variants.
+- `AbstractAssignVariantStrategy`, `AssignVariantStrategyInterface`, `AssignVariantForNewSession` and `AssignVariantForExistingSession` implemented using **Strategy Design Pattern** to handle assigning a variant the session.
 - `StartAbTest`, `StopAbTest` and `ViewAbTest` console commands implemented to manage A/B tests.
-- Home view, controller and route with a parameter named `abTestName` implemented to use A/B test feature.
+- `home.blade`, `HomeController` and related route implemented to use A/B test feature.
 
 
 ## How to use:
 
-- run `composer install`
 - run `php artisan migrate`
-- run `cp .env.example .env`
-- run `php artian key:generate`
 - run `php artisan ab-test:start FeatureA VariantA:1 VariantB:2`
-- open `localhost/project-name/public/home/FeatureA` in web browser to demonstrate the A/B test feature.
+- open `localhost/project-name/public/home` in the browser to demonstrate the A/B test feature.
 
-Also, you may start another A/B test and variants and go to `localhost/project-name/public/home/FeatureB` for example, to check related feature.
+Also, you may start another A/B test with its variants and check the url for newly added feature simultaneously.
 
 ---------------------------
 
