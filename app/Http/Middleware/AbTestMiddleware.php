@@ -2,14 +2,22 @@
 
 namespace App\Http\Middleware;
 
-use App\Classes\AbTestManager;
+use App\Models\AbTest;
+use App\Services\AbTestService;
 use Closure;
 use Illuminate\Http\Request;
 
 class AbTestMiddleware
 {
-    const SESSION_TEST_ID_KEY = 'ab_test_id';
-    const SESSION_VARIANT_ID_KEY = 'ab_test_variant_id';
+    const SESSION_TEST_NAME_KEY = 'ab_test_name';
+    const SESSION_VARIANT_NAME_KEY = 'ab_test_variant_name';
+
+    private AbTestService $abTestService;
+
+    public function __construct(AbTestService $abTestService)
+    {
+        $this->abTestService = $abTestService;
+    }
 
     /**
      * Handle an incoming request.
@@ -19,16 +27,15 @@ class AbTestMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $abTestManager = new AbTestManager();
-        $abTest = $abTestManager->getTest($request->abTestName);
+        $abTest = AbTest::getTest($request->abTestName);
         if (!$abTest)
             return abort(404);
 
         if ($this->abTestNameNotFoundInSession($request)) {
-            $variant = $abTestManager->getVariant($abTest);
+            $variant = $this->abTestService->getRandomVariant($abTest);
             $sessionVariantName = $variant['name'];
-            $request->session()->put(self::SESSION_TEST_ID_KEY, $request->abTestName);
-            $request->session()->put(self::SESSION_VARIANT_ID_KEY, $sessionVariantName);
+            $request->session()->put(self::SESSION_TEST_NAME_KEY, $request->abTestName);
+            $request->session()->put(self::SESSION_VARIANT_NAME_KEY, $sessionVariantName);
             $request->session()->save();
         }
 
@@ -41,7 +48,7 @@ class AbTestMiddleware
      */
     private function abTestNameNotFoundInSession(Request $request): bool
     {
-        return !$request->session()->has(self::SESSION_TEST_ID_KEY)
-            || $request->session()->get(self::SESSION_TEST_ID_KEY) != $request->abTestName;
+        return !$request->session()->has(self::SESSION_TEST_NAME_KEY)
+            || $request->session()->get(self::SESSION_TEST_NAME_KEY) != $request->abTestName;
     }
 }

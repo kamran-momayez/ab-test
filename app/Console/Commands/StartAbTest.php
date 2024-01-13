@@ -2,15 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Classes\AbTestManager;
 use App\Exceptions\IntegrityConstraintViolationException;
+use App\Models\AbTest;
+use App\Services\AbTestService;
 use Illuminate\Console\Command;
 
 class StartAbTest extends Command
 {
     /**
      * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'ab-test:start
@@ -19,7 +19,6 @@ class StartAbTest extends Command
 
     /**
      * The console command description.
-     *
      * @var string
      */
     protected $description = 'Start a new A/B test';
@@ -27,7 +26,7 @@ class StartAbTest extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(AbTestService $abTestService)
     {
         $name = $this->argument('name');
         $variants = $this->argument('variants');
@@ -45,15 +44,14 @@ class StartAbTest extends Command
 
         try {
             $variantsArray = $this->reformatArray($variants);
-
-            $abTestManager = new AbTestManager();
-            $abTestManager->start($name, $variantsArray);
-
+            $abTestService->createAbTestAndVariants($name, $variantsArray);
             $this->info("A/B test '{$name}' started with its {$variantsCount} variants.");
 
-        } catch (IntegrityConstraintViolationException $e) {
+        }
+        catch (IntegrityConstraintViolationException $e) {
             $this->error("A/B test with name {$name} can not start again!");
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->error('Failed to start A/B test. ' . $e->getMessage());
         }
     }
@@ -67,6 +65,7 @@ class StartAbTest extends Command
         return array_reduce($variants, function ($carry, $item) {
             $explodedItem = explode(":", $item);
             $carry[$explodedItem[0]] = $explodedItem[1];
+
             return $carry;
         });
     }

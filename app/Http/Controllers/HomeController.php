@@ -11,8 +11,8 @@ class HomeController extends Controller
     {
         // I sent
         return view('home', [
-            'abTestName' => Session::get(AbTestMiddleware::SESSION_TEST_ID_KEY),
-            'variantName' => Session::get(AbTestMiddleware::SESSION_VARIANT_ID_KEY)
+            'abTestName' => Session::get(AbTestMiddleware::SESSION_TEST_NAME_KEY),
+            'variantName' => Session::get(AbTestMiddleware::SESSION_VARIANT_NAME_KEY)
             ]);
     }
 }
