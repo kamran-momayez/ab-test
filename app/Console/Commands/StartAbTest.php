@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Exceptions\IntegrityConstraintViolationException;
-use App\Models\AbTest;
 use App\Services\AbTestService;
+use Exception;
 use Illuminate\Console\Command;
 
 class StartAbTest extends Command
@@ -33,25 +33,27 @@ class StartAbTest extends Command
 
         if (empty($name)) {
             $this->error('A/B Test name cannot be empty.');
+
             return;
         }
 
         $variantsCount = count($variants);
         if ($variantsCount < 2) {
             $this->error('You must provide at least two variants.');
+
             return;
         }
 
         try {
             $variantsArray = $this->reformatArray($variants);
             $abTestService->createAbTestAndVariants($name, $variantsArray);
-            $this->info("A/B test '{$name}' started with its {$variantsCount} variants.");
+            $this->info("A/B test $name started with its $variantsCount variants.");
 
         }
         catch (IntegrityConstraintViolationException $e) {
-            $this->error("A/B test with name {$name} can not start again!");
+            $this->error("A/B test with name $name cannot start again!");
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             $this->error('Failed to start A/B test. ' . $e->getMessage());
         }
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AbTestVariant extends Model
 {
@@ -16,7 +17,7 @@ class AbTestVariant extends Model
      */
     protected $fillable = ['name', 'targeting_ratio'];
 
-    public function abTest()
+    public function abTest(): BelongsTo
     {
         return $this->belongsTo(AbTest::class);
     }
