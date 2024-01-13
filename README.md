@@ -1,3 +1,25 @@
+## Description
+
+- `AbTest` and `AbTestVariant` model implemented to handle db responsibilities.
+- `AbTestService` implemented to handle logical responsibilities.
+- `AbTestMiddleware` implemented to handle assigning a variant the session.
+- `StartAbTest`, `StopAbTest` and `ViewAbTest` console commands implemented to manage A/B tests.
+- Home view, controller and route with a parameter named `abTestName` implemented to use A/B test feature.
+
+
+## How to use:
+
+- run `composer install`
+- run `php artisan migrate`
+- run `cp .env.example .env`
+- run `php artian key:generate`
+- run `php artisan ab-test:start FeatureA VariantA:1 VariantB:2`
+- open `localhost/project-name/public/home/FeatureA` in web browser to demonstrate the A/B test feature.
+
+Also, you may start another A/B test and variants and go to `localhost/project-name/public/home/FeatureB` for example, to check related feature.
+
+---------------------------
+
 <img src="https://brokerchooser.com/images/logo@2x.png" alt="BrokerChooser logo">
 
 ## BrokerChooser Senior Backend Developer Homework
