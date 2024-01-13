@@ -61,4 +61,12 @@ class AbTest extends Model
     {
         return self::firstWhere(['name' => $abTestName, 'is_running' => 1]);
     }
+
+    /**
+     * @return AbTest[]|Collection
+     */
+    public static function getRunningTests()
+    {
+        return self::where(['is_running' => 1])->get();
+    }
 }
