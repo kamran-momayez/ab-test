@@ -43,7 +43,6 @@ class StartSession
             $session = new Session();
             $session->save();
             $this->session->put(self::DB_SESSION_ID_KEY, $session->id);
-            $this->session->save();
         }
 
         if ($request->getMethod() === 'GET' && !$request->isXmlHttpRequest()) {

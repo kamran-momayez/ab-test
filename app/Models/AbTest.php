@@ -6,6 +6,7 @@ use App\Exceptions\IntegrityConstraintViolationException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\QueryException;
 
 class AbTest extends Model
@@ -18,7 +19,7 @@ class AbTest extends Model
      */
     protected $fillable = ['name'];
 
-    public function variants()
+    public function variants(): HasMany
     {
         return $this->hasMany(AbTestVariant::class);
     }
@@ -60,5 +61,13 @@ class AbTest extends Model
     public static function getTest($abTestName)
     {
         return self::firstWhere(['name' => $abTestName, 'is_running' => 1]);
+    }
+
+    /**
+     * @return AbTest[]|Collection
+     */
+    public static function getRunningTests()
+    {
+        return self::where(['is_running' => 1])->get();
     }
 }

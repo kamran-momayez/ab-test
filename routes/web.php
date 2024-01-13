@@ -17,4 +17,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home/{abTestName}', [HomeController::class, 'index'])->middleware('abTest');
+Route::get('/home', [HomeController::class, 'index'])->middleware('assignAbTestVariant');
